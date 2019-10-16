@@ -88,12 +88,7 @@ function sendRPCRequest(methodName, params) {
 
 function listDir(directoryId, localPath, isChildDir) {
   api.files.list(directoryId, function gotPutIoListing(data) {
-    if (data.files.length == 0) {
-      if (isChildDir) {
-        console.log('deleting empty directory from put.io');
-        api.files.delete(directoryId);
-      }
-    } else {
+    if (data.files.length !== 0) {
       fs.mkdir(localPath, 0766, function dirCreated() {
         _.each(data.files, function eachFile(fileNode) {
           var localFilePath = localPath + '/' + fileNode.name;
@@ -164,4 +159,3 @@ if (fs.existsSync(lockFile)) {
   listDir(directoryId, localPath, false);
 
 }
-
