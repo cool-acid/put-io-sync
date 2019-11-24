@@ -2,7 +2,7 @@ var PutIO = require('put.io-v2');
 var argv = require( 'argv' );
 var _ = require('underscore');
 var fs = require('fs');
-var Pushover = require('node-pushover');
+var Pushbullet = require('pushbullet');
 var request = require('request');
 var TVShowMatcher = require('./tvshowdir');
 var Aria2 = require('./aria2');
@@ -10,11 +10,8 @@ var config = require('./config');
 require('longjohn');
 
 var push = null;
-if (config.pushpin.enabled) {
-  push = new Pushover({
-    token: config.pushpin.appkey,
-    user: config.pushpin.userkey
-  });
+if (config.pushbullet.enabled) {
+  push = new Pushbullet(config.pushbullet.token);
 } else {
   push = {
     send: function() {}
@@ -183,25 +180,24 @@ if (fs.existsSync(lockFile)) {
 
   waiting.whenComplete = function() {
     aria.exec(function(complete, incomplete) {
-      var pushoverMessages = [];
+      var pushbulletMessages = [];
 
       _.each(complete, function(download) {
         var fileNode = download.associatedObject.fileNode;
         var tvshow = download.associatedObject.tvshow;
         if (tvshow) {
-          pushoverMessages.push('episode of ' + tvshow.name);
+          pushbulletMessages.push('episode of ' + tvshow.name);
         } else {
-          pushoverMessages.push(fileNode.name);
+          pushbulletMessages.push(fileNode.name);
         }
 
         console.log('deleting file ' + fileNode.id + ' (' + fileNode.name + ')');
         api.files.delete(fileNode.id);
       });
 
-      if (pushoverMessages.length > 0) {
-        push.send('put.io sync', 'Downloaded: \n' + pushoverMessages.join(", "));
+      if (pushbulletMessages.length > 0) {
+        push.note(null, 'put.io sync', 'Downloaded: \n' + pushbulletMessages.join(", "));
       }
     });
   };
 }
-

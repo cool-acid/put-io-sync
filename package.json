@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "put.io-v2": "git://github.com/343max/put.io.js-v2.git",
     "argv": "*",
-    "underscore": "*",
-    "node-pushover": "*",
+    "longjohn": "*",
+    "pushbullet": "^2.4.0",
+    "put.io-v2": "git://github.com/343max/put.io.js-v2.git",
     "request": "*",
-    "longjohn": "*"
+    "underscore": "*"
   }
 }
